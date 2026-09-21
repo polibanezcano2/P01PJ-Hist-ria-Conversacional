@@ -1,31 +1,15 @@
 package com.example.models.entities;
 
 import com.example.models.game.GameState;
-import com.example.models.generation.GameRandom;
-import com.example.models.map.ShipMap;
-import com.example.models.results.CrewWakeResult;
-import com.example.models.results.CrewWakeResultType;
 
 /**
  * Owns the game entities and coordinates entity-level events.
+ * 
+ * @param player     player entity
+ * @param malien     hostile entity
+ * @param crewMember single crew member NPC
  */
-public final class EntityManager {
-    private final Player player;
-    private final Malien malien;
-    private final CrewMember crewMember;
-
-    /**
-     * Creates an entity manager.
-     *
-     * @param player     player entity
-     * @param malien     hostile entity
-     * @param crewMember single crew member NPC
-     */
-    public EntityManager(Player player, Malien malien, CrewMember crewMember) {
-        this.player = player;
-        this.malien = malien;
-        this.crewMember = crewMember;
-    }
+public record EntityManager(Player player, Malien malien, CrewMember crewMember) {
 
     /**
      * Returns the player entity.
@@ -55,16 +39,13 @@ public final class EntityManager {
     }
 
     /**
-     * Moves non-player entities.
+     * Executes non-player entity turns.
      *
-     * <p>
-     * Empty scaffold: real movement rules will be implemented later.
-     *
-     * @param shipMap ship map
-     * @param random  seeded random source
+     * @param state current game state
      */
-    public void moveNonPlayerEntities(ShipMap shipMap, GameRandom random) {
-        malien.reduceDistraction();
+    public void takeEntityTurns(GameState state) {
+        malien.takeTurn(state);
+        crewMember.takeTurn(state);
     }
 
     /**
@@ -80,15 +61,9 @@ public final class EntityManager {
     /**
      * Wakes the crew member if the action is valid.
      *
-     * @param random seeded random source
-     * @return wake result placeholder
+     * @return wake result
      */
-    public CrewWakeResult wakeCrewMember(GameRandom random) {
-        if (!crewMember.isAsleep()) {
-            return new CrewWakeResult(CrewWakeResultType.ALREADY_AWAKE, "");
-        }
-
-        crewMember.wakeUp();
-        return new CrewWakeResult(CrewWakeResultType.TRUE_HINT, "");
+    public CrewMember.WakeResult wakeCrewMember() {
+        return crewMember.wakeUp();
     }
 }

@@ -2,6 +2,7 @@ package com.example.models.game;
 
 import com.example.models.entities.EntityManager;
 import com.example.models.generation.GameRandom;
+import com.example.models.generation.GameRoute;
 import com.example.models.items.Inventory;
 import com.example.models.items.Item;
 import com.example.models.items.ItemCatalog;
@@ -10,7 +11,9 @@ import com.example.models.map.Direction;
 import com.example.models.map.Room;
 import com.example.models.map.Rooms;
 import com.example.models.map.ShipMap;
-import com.example.models.results.CrewWakeResult;
+
+import java.util.EnumSet;
+import java.util.Set;
 
 /**
  * Mutable state of a generated game.
@@ -20,10 +23,11 @@ public final class GameState {
     private final ItemCatalog itemCatalog;
     private final EntityManager entityManager;
     private final GameRandom random;
-    private int playerSteps;
-    private boolean enginesRepaired;
+    private final GameRoute route;
+    private final Set<GameFlag> flags = EnumSet.noneOf(GameFlag.class);
+    private int playerTurns;
+    private int worldTurns;
     private boolean gameOver;
-    private boolean victory;
 
     /**
      * Creates a game state.
@@ -33,11 +37,50 @@ public final class GameState {
      * @param entityManager entity manager
      * @param random        seeded random source
      */
-    public GameState(ShipMap shipMap, ItemCatalog itemCatalog, EntityManager entityManager, GameRandom random) {
+    public GameState(ShipMap shipMap, ItemCatalog itemCatalog, EntityManager entityManager, GameRandom random,
+            GameRoute route) {
         this.shipMap = shipMap;
         this.itemCatalog = itemCatalog;
         this.entityManager = entityManager;
         this.random = random;
+        this.route = route;
+    }
+
+    /**
+     * Returns the prefabricated route selected for this game.
+     *
+     * @return selected game route
+     */
+    public GameRoute getRoute() {
+        return route;
+    }
+
+    /**
+     * Adds a progress flag.
+     *
+     * @param flag flag to add
+     */
+    public void addFlag(GameFlag flag) {
+        flags.add(flag);
+    }
+
+    /**
+     * Indicates whether a progress flag is active.
+     *
+     * @param flag flag to inspect
+     * @return {@code true} when active
+     */
+    public boolean hasFlag(GameFlag flag) {
+        return flags.contains(flag);
+    }
+
+    /**
+     * Returns a read-only snapshot of active flags.
+     *
+     * @return active flags
+     */
+    public Set<GameFlag> getFlags() {
+        return Set.copyOf(flags);
     }
 
     /**
@@ -69,6 +112,15 @@ public final class GameState {
     }
 
     /**
+     * Returns the item catalog.
+     *
+     * @return item catalog
+     */
+    public ItemCatalog getItemCatalog() {
+        return itemCatalog;
+    }
+
+    /**
      * Returns the entity manager.
      *
      * @return entity manager
@@ -90,13 +142,45 @@ public final class GameState {
         }
 
         entityManager.getPlayer().moveTo(destination.getId());
-        playerSteps++;
-
-        if (playerSteps % 2 == 0) {
-            entityManager.moveNonPlayerEntities(shipMap, random);
-        }
 
         return true;
+    }
+
+    /**
+     * Registers a player turn and advances the world every two player turns.
+     */
+    public void advancePlayerTurn() {
+        playerTurns++;
+
+        if (playerTurns % 2 == 0) {
+            advanceWorldTurn();
+        }
+    }
+
+    /**
+     * Advances the world one turn.
+     */
+    public void advanceWorldTurn() {
+        worldTurns++;
+        entityManager.takeEntityTurns(this);
+    }
+
+    /**
+     * Returns the number of player turns already processed.
+     *
+     * @return player turn count
+     */
+    public int getPlayerTurns() {
+        return playerTurns;
+    }
+
+    /**
+     * Returns the number of world turns already processed.
+     *
+     * @return world turn count
+     */
+    public int getWorldTurns() {
+        return worldTurns;
     }
 
     /**
@@ -106,7 +190,13 @@ public final class GameState {
      * @return {@code true} when the item is taken
      */
     public boolean takeItem(Items item) {
-        return false;
+        Room currentRoom = getCurrentRoom();
+        if (!currentRoom.removeItem(item)) {
+            return false;
+        }
+
+        getInventory().add(item);
+        return true;
     }
 
     /**
@@ -116,7 +206,13 @@ public final class GameState {
      * @return {@code true} when the item is placed
      */
     public boolean placeItem(Items item) {
-        return false;
+        Item definition = itemCatalog.getItem(item);
+        if (definition == null || !definition.placeable() || !getInventory().has(item)) {
+            return false;
+        }
+
+        getInventory().remove(item);
+        return getCurrentRoom().addItem(item);
     }
 
     /**
@@ -135,17 +231,8 @@ public final class GameState {
      *
      * @return wake result
      */
-    public CrewWakeResult wakeCrewMember() {
-        return entityManager.wakeCrewMember(random);
-    }
-
-    /**
-     * Repairs the propulsors.
-     *
-     * @return {@code true} when repair succeeds
-     */
-    public boolean repairEngines() {
-        return enginesRepaired;
+    public com.example.models.entities.CrewMember.WakeResult wakeCrewMember() {
+        return entityManager.wakeCrewMember();
     }
 
     /**
@@ -158,20 +245,13 @@ public final class GameState {
     }
 
     /**
-     * Indicates whether the player has won.
-     *
-     * @return {@code true} when victorious
+     * Marks the game as over.
      */
-    public boolean isVictory() {
-        return victory;
+    public void markGameOver() {
+        gameOver = true;
     }
 
-    /**
-     * Indicates whether the game has ended.
-     *
-     * @return {@code true} when defeated or victorious
-     */
-    public boolean isFinished() {
-        return gameOver || victory;
+    public GameRandom getRandom() {
+        return random;
     }
 }

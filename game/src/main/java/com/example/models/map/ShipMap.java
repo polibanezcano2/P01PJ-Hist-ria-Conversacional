@@ -68,7 +68,6 @@ public final class ShipMap {
         add(new Room(Rooms.EXIT_ROOM, "Sala sortida exterior", "Accés per sortir de la nau."));
         add(new Room(Rooms.COMMAND, "Comandament", "Sala de control de la nau."));
 
-        getRoom(Rooms.BATHROOM).addFeature(RoomFeature.FLOODED_DRAIN);
         addRoomActions();
     }
 

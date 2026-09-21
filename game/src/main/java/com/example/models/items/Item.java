@@ -5,7 +5,8 @@ import com.example.models.game.GameState;
 /**
  * Describes an item available in the escape room.
  */
-public record Item(Items id, String name, String description, boolean placeable, boolean usable, ItemUseAction useAction) {
+public record Item(Items id, String name, String description, boolean placeable, boolean usable,
+        ItemUseAction useAction) {
     /**
      * Executes the item action if one is defined.
      *

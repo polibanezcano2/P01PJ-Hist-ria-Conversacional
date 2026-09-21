@@ -62,29 +62,10 @@ public final class ActionHandler {
      * @return action result
      */
     public ActionResult handle(RoomAction action) {
-        return switch (action) {
-            case SEARCH_CAPSULE,
-                    CHECK_LOCKER,
-                    INSPECT_FLOODED_DRAIN,
-                    DRAIN_WATER,
-                    SEARCH_TABLE,
-                    TALK_CREW,
-                    SEARCH_PANTRY,
-                    PREPARE_BAIT,
-                    CHECK_TERMINAL,
-                    OPEN_DESK,
-                    OPEN_SUIT_LOCKER,
-                    EQUIP_SUIT,
-                    SEARCH_TOOLS,
-                    CALIBRATE_TOOL,
-                    INSPECT_ENGINES,
-                    REPAIR_ENGINES,
-                    CHECK_SHIP_MAP,
-                    START_ENGINES -> ActionResult.success("");
-        };
+        return ActionResult.success("");
     }
 
     private ActionResult handleWait() {
-        return ActionResult.success("");
+        return ActionResult.successTurn("");
     }
 }

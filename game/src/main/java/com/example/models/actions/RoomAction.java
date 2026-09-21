@@ -1,7 +1,5 @@
 package com.example.models.actions;
 
-import com.example.models.map.RoomFeature;
-
 /**
  * Room-specific actions prepared for future escape-room puzzles.
  */
@@ -13,10 +11,10 @@ public enum RoomAction {
     CHECK_LOCKER("Revisar taquilla"),
 
     /** Inspect the flooded drain without taking anything directly. */
-    INSPECT_FLOODED_DRAIN("Mirar sota l'aigua", RoomFeature.FLOODED_DRAIN),
+    INSPECT_FLOODED_DRAIN("Mirar sota l'aigua"),
 
     /** Try to lower or redirect the bathroom water. */
-    DRAIN_WATER("Drenar aigua", RoomFeature.FLOODED_DRAIN),
+    DRAIN_WATER("Drenar aigua"),
 
     /** Search the dining table. */
     SEARCH_TABLE("Registrar taula"),
@@ -61,15 +59,8 @@ public enum RoomAction {
     START_ENGINES("Engegar motors");
 
     private final String displayName;
-    private final RoomFeature feature;
-
     RoomAction(String displayName) {
-        this(displayName, null);
-    }
-
-    RoomAction(String displayName, RoomFeature feature) {
         this.displayName = displayName;
-        this.feature = feature;
     }
 
     /**
@@ -81,22 +72,4 @@ public enum RoomAction {
         return displayName;
     }
 
-    /**
-     * Returns the room feature this action targets.
-     *
-     * @return target feature, or {@code null} when the action is not tied to a
-     *         specific room feature
-     */
-    public RoomFeature getFeature() {
-        return feature;
-    }
-
-    /**
-     * Indicates whether this action targets a specific room feature.
-     *
-     * @return {@code true} when a feature is associated with the action
-     */
-    public boolean hasFeature() {
-        return feature != null;
-    }
 }

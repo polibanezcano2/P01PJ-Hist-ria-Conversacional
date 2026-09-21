@@ -6,7 +6,6 @@ import com.example.models.entities.Malien;
 import com.example.models.entities.Player;
 import com.example.models.game.GameState;
 import com.example.models.items.ItemCatalog;
-import com.example.models.items.Items;
 import com.example.models.map.Rooms;
 import com.example.models.map.ShipMap;
 
@@ -34,8 +33,11 @@ public final class GameGenerator {
         ShipMap shipMap = createShipMap();
         ItemCatalog itemCatalog = createItemCatalog();
         EntityManager entityManager = createEntityManager();
-        placeInitialItems(shipMap);
-        return new GameState(shipMap, itemCatalog, entityManager, random);
+        GameRoute route = selectRoute();
+        route.setup(shipMap, entityManager);
+        GameState state = new GameState(shipMap, itemCatalog, entityManager, random, route);
+        route.setupState(state);
+        return state;
     }
 
     /**
@@ -63,24 +65,12 @@ public final class GameGenerator {
      */
     private EntityManager createEntityManager() {
         Player player = new Player(Rooms.BEDROOM);
-        Malien malien = new Malien(Rooms.OFFICES);
-        CrewMember crewMember = new CrewMember(Rooms.LIVING_ROOM);
+        Malien malien = new Malien(Rooms.BEDROOM);
+        CrewMember crewMember = new CrewMember(Rooms.BEDROOM);
         return new EntityManager(player, malien, crewMember);
     }
 
-    /**
-     * Places initial known items in rooms.
-     *
-     * <p>
-     * Empty scaffold with fixed placement. Seed-based distribution rules will be
-     * added later.
-     *
-     * @param shipMap ship map to populate
-     */
-    private void placeInitialItems(ShipMap shipMap) {
-        shipMap.getRoom(Rooms.COSTUME).addItem(Items.ASTRONAUT_SUIT);
-        shipMap.getRoom(Rooms.WORKSHOPS).addItem(Items.REPAIR_TOOL);
-        shipMap.getRoom(Rooms.KITCHEN).addItem(Items.DONUT);
-        shipMap.getRoom(Rooms.LIVING_ROOM).addItem(Items.SNORKEL);
+    private GameRoute selectRoute() {
+        return GameRoute.SCAFFOLD;
     }
 }

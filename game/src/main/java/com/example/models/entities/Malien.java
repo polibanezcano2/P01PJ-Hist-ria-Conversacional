@@ -5,7 +5,7 @@ import com.example.models.map.Rooms;
 /**
  * Hostile entity that threatens the player.
  */
-public final class Malien extends Entity {
+public final class Malien extends Entity implements TurnActor {
     private int distractedTurns;
 
     /**
@@ -42,5 +42,13 @@ public final class Malien extends Entity {
         if (distractedTurns > 0) {
             distractedTurns--;
         }
+    }
+
+    /**
+     * Executes Malien's turn.
+     */
+    @Override
+    public void takeTurn(com.example.models.game.GameState state) {
+        reduceDistraction();
     }
 }

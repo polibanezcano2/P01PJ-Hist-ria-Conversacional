@@ -15,8 +15,8 @@ import com.example.models.items.Items;
  * <p>
  * Connections are stored as {@link Rooms} identifiers. The {@link ShipMap}
  * resolves those identifiers into actual {@code Room} instances when navigation
- * needs them. Room items and interactive places are stored as identifiers for the
- * same reason.
+ * needs them. Room items and actions are stored as identifiers for the same
+ * reason.
  */
 public final class Room {
     private final Rooms id;
@@ -24,7 +24,6 @@ public final class Room {
     private final String description;
     private final Map<Direction, Rooms> connections = new EnumMap<>(Direction.class);
     private final Set<Items> items = EnumSet.noneOf(Items.class);
-    private final Set<RoomFeature> features = EnumSet.noneOf(RoomFeature.class);
     private final Set<RoomAction> actions = EnumSet.noneOf(RoomAction.class);
 
     /**
@@ -133,35 +132,6 @@ public final class Room {
      */
     public Set<Items> getItems() {
         return Collections.unmodifiableSet(items);
-    }
-
-    /**
-     * Adds an interactive place to the room.
-     *
-     * @param feature feature identifier
-     * @return {@code true} if the feature was not already present
-     */
-    public boolean addFeature(RoomFeature feature) {
-        return features.add(feature);
-    }
-
-    /**
-     * Indicates whether this room contains an interactive place.
-     *
-     * @param feature feature identifier
-     * @return {@code true} when the feature is present
-     */
-    public boolean hasFeature(RoomFeature feature) {
-        return features.contains(feature);
-    }
-
-    /**
-     * Returns a read-only view of the interactive places in this room.
-     *
-     * @return read-only feature identifiers
-     */
-    public Set<RoomFeature> getFeatures() {
-        return Collections.unmodifiableSet(features);
     }
 
     /**
