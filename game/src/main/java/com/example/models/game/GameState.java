@@ -9,7 +9,7 @@ import com.example.models.items.ItemCatalog;
 import com.example.models.items.Items;
 import com.example.models.map.Direction;
 import com.example.models.map.Room;
-import com.example.models.map.Rooms;
+import com.example.models.map.RoomID;
 import com.example.models.map.ShipMap;
 
 import java.util.EnumSet;
@@ -98,7 +98,7 @@ public final class GameState {
      * @param id room identifier
      * @return matching room
      */
-    public Room getRoom(Rooms id) {
+    public Room getRoom(RoomID id) {
         return shipMap.getRoom(id);
     }
 

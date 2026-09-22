@@ -1,20 +1,30 @@
 package com.example.controllers;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
+import com.example.models.actions.ActionResult;
 import com.example.models.actions.ActionType;
 import com.example.models.actions.RoomAction;
+import com.example.models.entities.Entity;
+import com.example.models.entities.EntityManager;
 import com.example.models.game.GameState;
 import com.example.models.generation.GameGenerator;
 import com.example.models.generation.GameRandom;
+import com.example.models.items.Inventory;
+import com.example.models.items.Item;
+import com.example.models.items.Items;
 import com.example.models.map.Direction;
 import com.example.models.map.Room;
-import com.example.models.map.Rooms;
+import com.example.models.map.RoomID;
+import com.example.utils.ui.Cleaner;
 import com.example.utils.input.Menu;
 import com.example.utils.ui.Prettier;
-import com.example.utils.ui.Cleaner;
+import com.example.utils.ui.helpers.EntityDisplayer;
+import com.example.utils.ui.helpers.GameMenuBuilder;
 
 /**
  * Runs one game session.
@@ -29,6 +39,42 @@ public class GameLoop {
             ActionType.EXIT);
 
     private final Cleaner cleaner = new Cleaner();
+    private static final Comparator<RoomAction> ROOM_ACTION_COMPARATOR = Comparator
+            .comparing(RoomAction::getDisplayName);
+
+    private static final Comparator<Item> ITEM_COMPARATOR = Comparator
+            .comparing(Item::name);
+
+    private static final int NORMAL_WAIT_MESSAGE_CHANCE = 60;
+
+    private static final List<String> NORMAL_WAIT_MESSAGES = List.of(
+            "No fas res.",
+            "Et quedes quiet durant uns instants.",
+            "Passa un torn.",
+            "Respires fondo i esperes.",
+            "Escoltes el soroll constant de la nau.",
+            "Observes la sala amb calma.",
+            "Et quedes atent al teu voltant.",
+            "Esperes sense moure't.",
+            "El temps passa lentament.",
+            "Esperes uns segons i observes la sala.",
+            "El torn passa sense cap canvi evident.",
+            "Et quedes quiet, atent a qualsevol soroll estrany.");
+
+    private static final List<String> SILLY_WAIT_MESSAGES = List.of(
+            "T'esperes. Decisió valenta, si això compta com a decisió.",
+            "Perds el temps amb una elegància discutible.",
+            "Et quedes plantat com si esperessis instruccions del sostre.",
+            "La nau cruix. Tu continues fent de moble.",
+            "Un altre torn llençat al buit.",
+            "No mous ni un dit. Productivitat: zero.",
+            "El capità decideix practicar l'art de no fer res.",
+            "Vago. Però com a mínim ets constant.",
+            "Si esperar fos una feina, avui cobraries hores extra.",
+            "El Malien podria estar planejant coses. Tu no.",
+            "La tripulació imaginària jutja la teva mandra.",
+            "Esperes amb una confiança que ningú ha demanat.",
+            "No passa res visible, excepte la teva falta d'iniciativa.");
 
     /**
      * Executes the game loop.
@@ -39,54 +85,35 @@ public class GameLoop {
         boolean running = true;
 
         while (running && !state.isGameOver()) {
-            cleaner.clear();
-            printCurrentRoom(state);
-            System.out.println();
-
-            Menu.pause();
-            ActionType actionType = readMenuOption();
-
+            ActionType actionType = readMenuOption(state);
             running = handleMenuShell(actionType, state);
         }
     }
 
     /**
-     * Prints the current room summary shown before the main menu.
+     * Builds the current room summary shown above the main action menu.
      *
      * @param state current game state
+     * @return current room detail lines
      */
-    private void printCurrentRoom(GameState state) {
+    private List<String> createCurrentPositionDetails(GameState state) {
         Room currentRoom = state.getCurrentRoom();
-        Prettier.printTitle("Posició actual");
-        System.out.printf("%s%n", currentRoom.getName());
-        System.out.printf("%s%n%n", currentRoom.getDescription());
-
-        Prettier.printTitle("Sortides disponibles");
-        for (Map.Entry<Direction, Rooms> exit : currentRoom.getConnections().entrySet()) {
-            Room destination = state.getRoom(exit.getValue());
-            String destinationName = destination == null ? "Sortida desconeguda" : destination.getName();
-            System.out.printf("%s -> %s%n", exit.getKey().getDisplayName(), destinationName);
-        }
-
-        if (!currentRoom.getActions().isEmpty()) {
-            System.out.println();
-            Prettier.printTitle("Accions de la sala");
-            for (RoomAction action : currentRoom.getActions()) {
-                System.out.printf("- %s%n", action.getDisplayName());
-            }
-        }
+        return List.of(
+                "Posició actual: " + currentRoom.getName(),
+                currentRoom.getDescription());
     }
 
     /**
      * Reads the selected top-level menu section.
      *
+     * @param state current game state
      * @return selected action type
      */
-    private ActionType readMenuOption() {
+    private ActionType readMenuOption(GameState state) {
         List<String> options = MAIN_MENU_OPTIONS.stream()
                 .map(ActionType::getDisplayName)
                 .toList();
-        int option = Menu.getOption(options, "Accions");
+        int option = Menu.getOption(options, "Accions", createCurrentPositionDetails(state));
         return MAIN_MENU_OPTIONS.get(option - 1);
     }
 
@@ -125,7 +152,7 @@ public class GameLoop {
      */
     private void handleNavigationMenu(GameState state) {
         Room currentRoom = state.getCurrentRoom();
-        List<Map.Entry<Direction, Rooms>> exits = new ArrayList<>(currentRoom.getConnections().entrySet());
+        List<Map.Entry<Direction, RoomID>> exits = new ArrayList<>(currentRoom.getConnections().entrySet());
 
         if (exits.isEmpty()) {
             Prettier.warn("No hi ha sortides disponibles.");
@@ -133,15 +160,14 @@ public class GameLoop {
             return;
         }
 
-        List<String> options = createNavigationOptions(state, exits);
-        options.add("Tornar");
+        List<String> options = GameMenuBuilder.createNavigationOptions(state, exits);
 
         int option = Menu.getOption(options, "Navegació");
         if (option == options.size()) {
             return;
         }
 
-        Map.Entry<Direction, Rooms> selectedExit = exits.get(option - 1);
+        Map.Entry<Direction, RoomID> selectedExit = exits.get(option - 1);
         Room destination = state.getRoom(selectedExit.getValue());
 
         if (destination == null) {
@@ -163,48 +189,223 @@ public class GameLoop {
     }
 
     /**
-     * Builds the labels shown in the navigation menu.
-     *
-     * @param state current game state used to resolve room identifiers
-     * @param exits available exits from the current room
-     * @return mutable option list with one label per exit
-     */
-    private List<String> createNavigationOptions(GameState state, List<Map.Entry<Direction, Rooms>> exits) {
-        List<String> options = new ArrayList<>();
-
-        for (Map.Entry<Direction, Rooms> exit : exits) {
-            Room destination = state.getRoom(exit.getValue());
-            if (destination == null) {
-                options.add("Sortida desconeguda");
-            } else {
-                options.add(destination.getName());
-            }
-        }
-
-        return options;
-    }
-
-    /**
      * Handles the inventory submenu.
      *
      * <p>
-     * Scaffold: inventory listing and item commands will be implemented here.
+     * The inventory menu lets the player inspect carried items. Selecting an item
+     * opens its own detail menu when the item supports commands, or a read-only
+     * detail screen otherwise.
      *
      * @param state current game state
      */
     private void handleInventoryMenu(GameState state) {
+        boolean inspectingInventory = true;
+        while (inspectingInventory) {
+            List<Item> items = getInventoryItems(state);
+            if (items.isEmpty()) {
+                Prettier.warn("No portes cap objecte.");
+                Menu.pause();
+                return;
+            }
+
+            List<String> options = GameMenuBuilder.createInventoryMenuOptions(items);
+            int option = Menu.getOption(options, "Inventari");
+            if (option == options.size()) {
+                inspectingInventory = false;
+                continue;
+            }
+
+            Item selectedItem = items.get(option - 1);
+            handleItemMenu(selectedItem, state);
+        }
+    }
+
+    /**
+     * Opens the submenu for a selected inventory item.
+     *
+     * @param item  selected item definition
+     * @param state current game state
+     */
+    private void handleItemMenu(Item item, GameState state) {
+        if (!hasItemCommands(item)) {
+            displayItem(item);
+            return;
+        }
+
+        boolean inspectingItem = true;
+        while (inspectingItem && state.getInventory().has(item.id())) {
+            List<String> options = GameMenuBuilder.createItemMenuOptions(item);
+            int option = Menu.getOption(options, item.name(), createItemDetails(item));
+            if (option == options.size()) {
+                inspectingItem = false;
+                continue;
+            }
+
+            inspectingItem = handleItemCommand(item, option, state);
+        }
+    }
+
+    /**
+     * Displays a read-only item details screen.
+     *
+     * @param item item definition to display
+     */
+    private void displayItem(Item item) {
+        cleaner.clear();
+        Prettier.printTitle(item.name());
+        System.out.println(item.description());
+        System.out.println();
+        Menu.pause();
+    }
+
+    /**
+     * Executes the selected item command.
+     *
+     * @param item   selected item definition
+     * @param option selected option number
+     * @param state  current game state
+     * @return {@code true} to keep the item submenu open
+     */
+    private boolean handleItemCommand(Item item, int option, GameState state) {
+        int currentOption = 1;
+
+        if (item.usable()) {
+            if (option == currentOption) {
+                useInventoryItem(item, state);
+                return true;
+            }
+            currentOption++;
+        }
+
+        if (item.placeable() && option == currentOption) {
+            return !placeInventoryItem(item, state);
+        }
+
+        return true;
+    }
+
+    /**
+     * Uses an inventory item and prints the result.
+     *
+     * @param item  item to use
+     * @param state current game state
+     */
+    private void useInventoryItem(Item item, GameState state) {
+        if (state.useItem(item.id())) {
+            Prettier.info("Has utilitzat: %s", item.name());
+        } else {
+            Prettier.warn("Ara mateix no pots utilitzar aquest objecte.");
+        }
+        Menu.pause();
+    }
+
+    /**
+     * Places an inventory item in the current room and prints the result.
+     *
+     * @param item  item to place
+     * @param state current game state
+     * @return {@code true} when the item was placed
+     */
+    private boolean placeInventoryItem(Item item, GameState state) {
+        if (state.placeItem(item.id())) {
+            Prettier.info("Has col·locat: %s", item.name());
+            Menu.pause();
+            return true;
+        }
+
+        Prettier.warn("No pots col·locar aquest objecte aquí.");
+        Menu.pause();
+        return false;
+    }
+
+    /**
+     * Returns whether an item has at least one interactive command.
+     *
+     * @param item item definition to inspect
+     * @return {@code true} when usable or placeable
+     */
+    private boolean hasItemCommands(Item item) {
+        return item.usable() || item.placeable();
+    }
+
+    /**
+     * Builds the detail lines shown in an item submenu.
+     *
+     * @param item item definition to describe
+     * @return item detail lines
+     */
+    private List<String> createItemDetails(Item item) {
+        return List.of(item.description());
+    }
+
+    /**
+     * Resolves inventory identifiers into catalog definitions.
+     *
+     * @param state current game state
+     * @return sorted item definitions currently carried by the player
+     */
+    private List<Item> getInventoryItems(GameState state) {
+        Inventory inventory = state.getInventory();
+        return inventory.getItems()
+                .stream()
+                .map((Items itemId) -> state.getItemCatalog().getItem(itemId))
+                .filter(Objects::nonNull)
+                .sorted(ITEM_COMPARATOR)
+                .toList();
     }
 
     /**
      * Handles the map submenu.
      *
      * <p>
-     * Scaffold: map rendering and optional entity position display will be
-     * implemented here.
+     * The map menu lets the player inspect every tracked entity without consuming
+     * a turn. After showing one entity, control returns to the map menu until the
+     * player chooses to go back.
      *
      * @param state current game state
      */
     private void handleMapMenu(GameState state) {
+        List<Entity> entities = getMapEntities(state);
+        List<String> options = GameMenuBuilder.createMapMenuOptions(entities);
+
+        boolean inspectingMap = true;
+        while (inspectingMap) {
+            int option = Menu.getOption(options, "Mapa");
+            if (option == options.size()) {
+                inspectingMap = false;
+                continue;
+            }
+
+            Entity selectedEntity = entities.get(option - 1);
+            displayEntity(selectedEntity, state);
+        }
+    }
+
+    /**
+     * Returns the entities shown by the map submenu.
+     *
+     * @param state current game state
+     * @return ordered entity list matching the map menu options
+     */
+    private List<Entity> getMapEntities(GameState state) {
+        EntityManager manager = state.getEntityManager();
+        return List.of(
+                manager.getPlayer(),
+                manager.getMalien(),
+                manager.getCrewMember());
+    }
+
+    /**
+     * Clears the screen and prints the selected entity's map details.
+     *
+     * @param entity entity selected in the map menu
+     * @param state  current game state
+     */
+    private void displayEntity(Entity entity, GameState state) {
+        cleaner.clear();
+        EntityDisplayer.printEntityMapInfo(entity, state);
+        System.out.println();
+        Menu.pause();
     }
 
     /**
@@ -219,9 +420,38 @@ public class GameLoop {
      * @param state current game state
      */
     private void handleInteractionMenu(GameState state) {
-        // Build a menu from state.getCurrentRoom().getActions().
-        // Resolve the selected RoomAction with RoomActionHandler.handle(action, state).
-        // Print the returned ActionResult message.
+        List<RoomAction> actions = state.getCurrentRoom()
+                .getActions()
+                .stream()
+                .sorted(ROOM_ACTION_COMPARATOR)
+                .toList();
+
+        if (actions.isEmpty()) {
+            Prettier.warn("No hi ha interaccions disponibles en aquesta sala.");
+            Menu.pause();
+            return;
+        }
+
+        List<String> options = GameMenuBuilder.createInteractionMenu(actions);
+        int option = Menu.getOption(options, "Interaccions");
+
+        if (option == options.size()) {
+            return;
+        }
+
+        RoomAction selected = actions.get(option - 1);
+        ActionResult result = RoomActionHandler.handle(selected, state);
+
+        if (result.message().isBlank()) {
+            return;
+        }
+
+        if (result.success()) {
+            Prettier.info(result.message());
+        } else {
+            Prettier.warn(result.message());
+        }
+        Menu.pause();
     }
 
     /**
@@ -235,5 +465,21 @@ public class GameLoop {
      */
     private void handleWaitMenu(GameState state) {
         state.advancePlayerTurn();
+        Prettier.info(getWaitMessage(state));
+        Menu.pause();
+    }
+
+    /**
+     * Selects a random message for the wait action.
+     *
+     * @param state current game state
+     * @return wait feedback message
+     */
+    private String getWaitMessage(GameState state) {
+        List<String> messages = state.getRandom().chance(NORMAL_WAIT_MESSAGE_CHANCE)
+                ? NORMAL_WAIT_MESSAGES
+                : SILLY_WAIT_MESSAGES;
+        int messageIndex = state.getRandom().nextInt(messages.size());
+        return messages.get(messageIndex);
     }
 }
