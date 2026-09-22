@@ -1,9 +1,13 @@
 package com.example.models.actions;
 
 /**
- * Result of executing a player action.
+ * Result of executing an action.
+ *
+ * <p>
+ * This result carries only success state and UI text. Turn consumption is
+ * controlled by the submenu that executed the action.
  */
-public record ActionResult(boolean success, String message, boolean consumesTurn) {
+public record ActionResult(boolean success, String message) {
     /**
      * Creates a successful result.
      *
@@ -11,17 +15,7 @@ public record ActionResult(boolean success, String message, boolean consumesTurn
      * @return action result
      */
     public static ActionResult success(String message) {
-        return new ActionResult(true, message, false);
-    }
-
-    /**
-     * Creates a successful result that consumes a turn.
-     *
-     * @param message optional result message
-     * @return action result
-     */
-    public static ActionResult successTurn(String message) {
-        return new ActionResult(true, message, true);
+        return new ActionResult(true, message);
     }
 
     /**
@@ -31,16 +25,6 @@ public record ActionResult(boolean success, String message, boolean consumesTurn
      * @return action result
      */
     public static ActionResult failure(String message) {
-        return new ActionResult(false, message, false);
-    }
-
-    /**
-     * Creates a failed result that still consumes a turn.
-     *
-     * @param message optional result message
-     * @return action result
-     */
-    public static ActionResult failureTurn(String message) {
-        return new ActionResult(false, message, true);
+        return new ActionResult(false, message);
     }
 }

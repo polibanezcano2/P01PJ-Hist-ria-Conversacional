@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.example.models.actions.ActionHandler;
-import com.example.models.actions.ActionResult;
 import com.example.models.actions.ActionType;
 import com.example.models.actions.RoomAction;
 import com.example.models.game.GameState;
@@ -38,7 +36,6 @@ public class GameLoop {
     public void run() {
         GameRandom random = new GameRandom(System.currentTimeMillis());
         GameState state = new GameGenerator(random).generate();
-        ActionHandler actionHandler = new ActionHandler(state);
         boolean running = true;
 
         while (running && !state.isGameOver()) {
@@ -49,10 +46,15 @@ public class GameLoop {
             Menu.pause();
             ActionType actionType = readMenuOption();
 
-            running = handleMenuShell(actionType, state, actionHandler);
+            running = handleMenuShell(actionType, state);
         }
     }
 
+    /**
+     * Prints the current room summary shown before the main menu.
+     *
+     * @param state current game state
+     */
     private void printCurrentRoom(GameState state) {
         Room currentRoom = state.getCurrentRoom();
         Prettier.printTitle("Posició actual");
@@ -75,6 +77,11 @@ public class GameLoop {
         }
     }
 
+    /**
+     * Reads the selected top-level menu section.
+     *
+     * @return selected action type
+     */
     private ActionType readMenuOption() {
         List<String> options = MAIN_MENU_OPTIONS.stream()
                 .map(ActionType::getDisplayName)
@@ -83,22 +90,28 @@ public class GameLoop {
         return MAIN_MENU_OPTIONS.get(option - 1);
     }
 
-    private boolean handleMenuShell(ActionType actionType, GameState state, ActionHandler actionHandler) {
-        return switch (actionType) {
+    /**
+     * Dispatches a top-level menu section to its submenu handler.
+     *
+     * @param actionType selected top-level menu section
+     * @param state      current game state
+     * @return {@code false} only when the player chooses to exit the session
+     */
+    private boolean handleMenuShell(ActionType actionType, GameState state) {
+        switch (actionType) {
             case NAVIGATION -> handleNavigationMenu(state);
             case INVENTORY -> handleInventoryMenu(state);
             case MAP -> handleMapMenu(state);
-            case INTERACTION -> handleInteractionMenu(state, actionHandler);
-            case WAIT -> {
-                applyActionResult(actionHandler.handle(actionType), state);
-                yield true;
-            }
+            case INTERACTION -> handleInteractionMenu(state);
+            case WAIT -> handleWaitMenu(state);
             case EXIT -> {
                 cleaner.clear();
                 Prettier.info("Sortint del joc...");
-                yield false;
+                return false;
             }
-        };
+        }
+
+        return true;
     }
 
     /**
@@ -109,16 +122,15 @@ public class GameLoop {
      * direction so the map can still move through directional connections.
      *
      * @param state current game state
-     * @return {@code true} to keep the game loop running
      */
-    private boolean handleNavigationMenu(GameState state) {
+    private void handleNavigationMenu(GameState state) {
         Room currentRoom = state.getCurrentRoom();
         List<Map.Entry<Direction, Rooms>> exits = new ArrayList<>(currentRoom.getConnections().entrySet());
 
         if (exits.isEmpty()) {
             Prettier.warn("No hi ha sortides disponibles.");
             Menu.pause();
-            return true;
+            return;
         }
 
         List<String> options = createNavigationOptions(state, exits);
@@ -126,7 +138,7 @@ public class GameLoop {
 
         int option = Menu.getOption(options, "Navegació");
         if (option == options.size()) {
-            return true;
+            return;
         }
 
         Map.Entry<Direction, Rooms> selectedExit = exits.get(option - 1);
@@ -135,7 +147,7 @@ public class GameLoop {
         if (destination == null) {
             Prettier.warn("Aquesta sortida encara no està configurada.");
             Menu.pause();
-            return true;
+            return;
         }
 
         boolean success = state.move(selectedExit.getKey());
@@ -148,7 +160,6 @@ public class GameLoop {
         }
 
         Menu.pause();
-        return success;
     }
 
     /**
@@ -173,27 +184,56 @@ public class GameLoop {
         return options;
     }
 
-    private boolean handleInventoryMenu(GameState state) {
-        return true;
-    }
-
-    private boolean handleMapMenu(GameState state) {
-        return true;
-    }
-
-    private boolean handleInteractionMenu(GameState state, ActionHandler actionHandler) {
-        return true;
+    /**
+     * Handles the inventory submenu.
+     *
+     * <p>
+     * Scaffold: inventory listing and item commands will be implemented here.
+     *
+     * @param state current game state
+     */
+    private void handleInventoryMenu(GameState state) {
     }
 
     /**
-     * Applies common consequences of action execution.
+     * Handles the map submenu.
      *
-     * @param result action result to apply
-     * @param state  current game state
+     * <p>
+     * Scaffold: map rendering and optional entity position display will be
+     * implemented here.
+     *
+     * @param state current game state
      */
-    private void applyActionResult(ActionResult result, GameState state) {
-        if (result.consumesTurn()) {
-            state.advancePlayerTurn();
-        }
+    private void handleMapMenu(GameState state) {
+    }
+
+    /**
+     * Shows room-specific actions and delegates the selected action execution.
+     *
+     * <p>
+     * This method owns only the submenu flow: list actions, read the selected
+     * option, call {@link RoomActionHandler#handle(RoomAction, GameState)}, and
+     * print the returned result. The room action itself decides whether inventory
+     * objects are relevant.
+     *
+     * @param state current game state
+     */
+    private void handleInteractionMenu(GameState state) {
+        // Build a menu from state.getCurrentRoom().getActions().
+        // Resolve the selected RoomAction with RoomActionHandler.handle(action, state).
+        // Print the returned ActionResult message.
+    }
+
+    /**
+     * Handles the wait action.
+     *
+     * <p>
+     * Waiting has one effect only: it consumes one player turn, exactly like a
+     * successful movement would.
+     *
+     * @param state current game state
+     */
+    private void handleWaitMenu(GameState state) {
+        state.advancePlayerTurn();
     }
 }
