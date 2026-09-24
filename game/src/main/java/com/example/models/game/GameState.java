@@ -6,7 +6,7 @@ import com.example.models.generation.GameRoute;
 import com.example.models.items.Inventory;
 import com.example.models.items.Item;
 import com.example.models.items.ItemCatalog;
-import com.example.models.items.Items;
+import com.example.models.items.ItemID;
 import com.example.models.map.Direction;
 import com.example.models.map.Room;
 import com.example.models.map.RoomID;
@@ -189,7 +189,7 @@ public final class GameState {
      * @param item item identifier
      * @return {@code true} when the item is taken
      */
-    public boolean takeItem(Items item) {
+    public boolean takeItem(ItemID item) {
         Room currentRoom = getCurrentRoom();
         if (!currentRoom.removeItem(item)) {
             return false;
@@ -205,7 +205,7 @@ public final class GameState {
      * @param item item identifier
      * @return {@code true} when the item is placed
      */
-    public boolean placeItem(Items item) {
+    public boolean placeItem(ItemID item) {
         Item definition = itemCatalog.getItem(item);
         if (definition == null || !definition.placeable() || !getInventory().has(item)) {
             return false;
@@ -221,7 +221,7 @@ public final class GameState {
      * @param item item identifier
      * @return {@code true} when the item action succeeds
      */
-    public boolean useItem(Items item) {
+    public boolean useItem(ItemID item) {
         Item definition = itemCatalog.getItem(item);
         return definition != null && definition.usable() && definition.use(this);
     }

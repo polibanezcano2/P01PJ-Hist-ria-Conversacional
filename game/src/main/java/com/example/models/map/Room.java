@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.example.models.actions.RoomAction;
-import com.example.models.items.Items;
+import com.example.models.items.ItemID;
 
 /**
  * Represents a ship room without directly referencing other room objects.
@@ -23,7 +23,7 @@ public final class Room {
     private final String name;
     private final String description;
     private final Map<Direction, RoomID> connections = new EnumMap<>(Direction.class);
-    private final Set<Items> items = EnumSet.noneOf(Items.class);
+    private final Set<ItemID> items = EnumSet.noneOf(ItemID.class);
     private final Set<RoomAction> actions = EnumSet.noneOf(RoomAction.class);
 
     /**
@@ -101,7 +101,7 @@ public final class Room {
      * @param itemId item identifier
      * @return {@code true} if the item was not already present
      */
-    public boolean addItem(Items itemId) {
+    public boolean addItem(ItemID itemId) {
         return items.add(itemId);
     }
 
@@ -111,7 +111,7 @@ public final class Room {
      * @param itemId item identifier
      * @return {@code true} if the item was present
      */
-    public boolean removeItem(Items itemId) {
+    public boolean removeItem(ItemID itemId) {
         return items.remove(itemId);
     }
 
@@ -121,7 +121,7 @@ public final class Room {
      * @param item item identifier
      * @return {@code true} when the item is present
      */
-    public boolean hasItem(Items item) {
+    public boolean hasItem(ItemID item) {
         return items.contains(item);
     }
 
@@ -130,7 +130,7 @@ public final class Room {
      *
      * @return read-only item identifiers
      */
-    public Set<Items> getItems() {
+    public Set<ItemID> getItems() {
         return Collections.unmodifiableSet(items);
     }
 

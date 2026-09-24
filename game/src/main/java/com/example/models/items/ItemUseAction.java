@@ -14,5 +14,5 @@ public interface ItemUseAction {
      * @param item  item being used
      * @return {@code true} when the action succeeds
      */
-    boolean execute(GameState state, Items item);
+    boolean execute(GameState state, ItemID item);
 }

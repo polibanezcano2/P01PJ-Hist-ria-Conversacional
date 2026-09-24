@@ -16,7 +16,7 @@ import com.example.models.generation.GameGenerator;
 import com.example.models.generation.GameRandom;
 import com.example.models.items.Inventory;
 import com.example.models.items.Item;
-import com.example.models.items.Items;
+import com.example.models.items.ItemID;
 import com.example.models.map.Direction;
 import com.example.models.map.Room;
 import com.example.models.map.RoomID;
@@ -348,7 +348,7 @@ public class GameLoop {
         Inventory inventory = state.getInventory();
         return inventory.getItems()
                 .stream()
-                .map((Items itemId) -> state.getItemCatalog().getItem(itemId))
+                .map((ItemID itemId) -> state.getItemCatalog().getItem(itemId))
                 .filter(Objects::nonNull)
                 .sorted(ITEM_COMPARATOR)
                 .toList();
@@ -476,10 +476,13 @@ public class GameLoop {
      * @return wait feedback message
      */
     private String getWaitMessage(GameState state) {
-        List<String> messages = state.getRandom().chance(NORMAL_WAIT_MESSAGE_CHANCE)
+        GameRandom random = state.getRandom();
+        
+        List<String> messages = random.chance(NORMAL_WAIT_MESSAGE_CHANCE)
                 ? NORMAL_WAIT_MESSAGES
                 : SILLY_WAIT_MESSAGES;
-        int messageIndex = state.getRandom().nextInt(messages.size());
+                
+        int messageIndex = random.nextInt(messages.size());
         return messages.get(messageIndex);
     }
 }

@@ -102,7 +102,7 @@ public final class EntityDisplayer {
      * @return readable entity name
      */
     public static String formatEntityName(Entity entity) {
-        return entity instanceof Player ? entity.getName() + " (Jugador)" : entity.getName();
+        return entity.getName() + (entity instanceof Player ? " (Jugador)" : "");
     }
 
     /**
