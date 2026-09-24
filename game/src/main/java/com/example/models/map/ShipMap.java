@@ -13,7 +13,7 @@ import com.example.models.actions.RoomAction;
  * to the game generator so that each game can use a seed.
  */
 public final class ShipMap {
-    private final Map<Rooms, Room> rooms = new EnumMap<>(Rooms.class);
+    private final Map<RoomID, Room> rooms = new EnumMap<>(RoomID.class);
 
     /**
      * Creates the default ship map.
@@ -29,7 +29,7 @@ public final class ShipMap {
      * @return starting room
      */
     public Room getStartingRoom() {
-        return getRoom(Rooms.BEDROOM);
+        return getRoom(RoomID.BEDROOM);
     }
 
     /**
@@ -38,7 +38,7 @@ public final class ShipMap {
      * @param id room identifier
      * @return matching room
      */
-    public Room getRoom(Rooms id) {
+    public Room getRoom(RoomID id) {
         return rooms.get(id);
     }
 
@@ -50,7 +50,7 @@ public final class ShipMap {
      * @return destination room, or {@code null} when there is no exit
      */
     public Room getConnectedRoom(Room from, Direction direction) {
-        Rooms destinationId = from.getConnection(direction);
+        RoomID destinationId = from.getConnection(direction);
         return destinationId == null ? null : getRoom(destinationId);
     }
 
@@ -58,62 +58,62 @@ public final class ShipMap {
      * Creates every room object before any connection is added.
      */
     private void createRooms() {
-        add(new Room(Rooms.WORKSHOPS, "Tallers", "Zona on es guarden eines i peces de reparació."));
-        add(new Room(Rooms.COSTUME, "Vestuari", "Sala amb equipament per sortir a l'exterior."));
-        add(new Room(Rooms.KITCHEN, "Cuina", "Espai de menjar i subministraments."));
-        add(new Room(Rooms.BATHROOM, "Banys", "Zona inundada de banys de la tripulació."));
-        add(new Room(Rooms.BEDROOM, "Dormitori", "Zona d'hibernació i descans de la tripulació."));
-        add(new Room(Rooms.OFFICES, "Oficines", "Zona central de treball de la nau."));
-        add(new Room(Rooms.LIVING_ROOM, "Menjador", "Sala comuna on menja la tripulació."));
-        add(new Room(Rooms.EXIT_ROOM, "Sala sortida exterior", "Accés per sortir de la nau."));
-        add(new Room(Rooms.COMMAND, "Comandament", "Sala de control de la nau."));
+        add(new Room(RoomID.WORKSHOPS, "Tallers", "Zona on es guarden eines i peces de reparació."));
+        add(new Room(RoomID.COSTUME, "Vestuari", "Sala amb equipament per sortir a l'exterior."));
+        add(new Room(RoomID.KITCHEN, "Cuina", "Espai de menjar i subministraments."));
+        add(new Room(RoomID.BATHROOM, "Banys", "Zona inundada de banys de la tripulació."));
+        add(new Room(RoomID.BEDROOM, "Dormitori", "Zona d'hibernació i descans de la tripulació."));
+        add(new Room(RoomID.OFFICES, "Oficines", "Zona central de treball de la nau."));
+        add(new Room(RoomID.LIVING_ROOM, "Menjador", "Sala comuna on menja la tripulació."));
+        add(new Room(RoomID.EXIT_ROOM, "Sala sortida exterior", "Accés per sortir de la nau."));
+        add(new Room(RoomID.COMMAND, "Comandament", "Sala de control de la nau."));
 
         addRoomActions();
     }
 
     private void addRoomActions() {
-        getRoom(Rooms.BEDROOM).addAction(RoomAction.SEARCH_CAPSULE);
-        getRoom(Rooms.BEDROOM).addAction(RoomAction.CHECK_LOCKER);
+        getRoom(RoomID.BEDROOM).addAction(RoomAction.SEARCH_CAPSULE);
+        getRoom(RoomID.BEDROOM).addAction(RoomAction.CHECK_LOCKER);
 
-        getRoom(Rooms.BATHROOM).addAction(RoomAction.INSPECT_FLOODED_DRAIN);
-        getRoom(Rooms.BATHROOM).addAction(RoomAction.DRAIN_WATER);
+        getRoom(RoomID.BATHROOM).addAction(RoomAction.INSPECT_FLOODED_DRAIN);
+        getRoom(RoomID.BATHROOM).addAction(RoomAction.DRAIN_WATER);
 
-        getRoom(Rooms.LIVING_ROOM).addAction(RoomAction.SEARCH_TABLE);
-        getRoom(Rooms.LIVING_ROOM).addAction(RoomAction.TALK_CREW);
+        getRoom(RoomID.LIVING_ROOM).addAction(RoomAction.SEARCH_TABLE);
+        getRoom(RoomID.LIVING_ROOM).addAction(RoomAction.TALK_CREW);
 
-        getRoom(Rooms.KITCHEN).addAction(RoomAction.SEARCH_PANTRY);
-        getRoom(Rooms.KITCHEN).addAction(RoomAction.PREPARE_BAIT);
+        getRoom(RoomID.KITCHEN).addAction(RoomAction.SEARCH_PANTRY);
+        getRoom(RoomID.KITCHEN).addAction(RoomAction.PREPARE_BAIT);
 
-        getRoom(Rooms.OFFICES).addAction(RoomAction.CHECK_TERMINAL);
-        getRoom(Rooms.OFFICES).addAction(RoomAction.OPEN_DESK);
+        getRoom(RoomID.OFFICES).addAction(RoomAction.CHECK_TERMINAL);
+        getRoom(RoomID.OFFICES).addAction(RoomAction.OPEN_DESK);
 
-        getRoom(Rooms.COSTUME).addAction(RoomAction.OPEN_SUIT_LOCKER);
-        getRoom(Rooms.COSTUME).addAction(RoomAction.EQUIP_SUIT);
+        getRoom(RoomID.COSTUME).addAction(RoomAction.OPEN_SUIT_LOCKER);
+        getRoom(RoomID.COSTUME).addAction(RoomAction.EQUIP_SUIT);
 
-        getRoom(Rooms.WORKSHOPS).addAction(RoomAction.SEARCH_TOOLS);
-        getRoom(Rooms.WORKSHOPS).addAction(RoomAction.CALIBRATE_TOOL);
+        getRoom(RoomID.WORKSHOPS).addAction(RoomAction.SEARCH_TOOLS);
+        getRoom(RoomID.WORKSHOPS).addAction(RoomAction.CALIBRATE_TOOL);
 
-        getRoom(Rooms.EXIT_ROOM).addAction(RoomAction.INSPECT_ENGINES);
-        getRoom(Rooms.EXIT_ROOM).addAction(RoomAction.REPAIR_ENGINES);
+        getRoom(RoomID.EXIT_ROOM).addAction(RoomAction.INSPECT_ENGINES);
+        getRoom(RoomID.EXIT_ROOM).addAction(RoomAction.REPAIR_ENGINES);
 
-        getRoom(Rooms.COMMAND).addAction(RoomAction.CHECK_SHIP_MAP);
-        getRoom(Rooms.COMMAND).addAction(RoomAction.START_ENGINES);
+        getRoom(RoomID.COMMAND).addAction(RoomAction.CHECK_SHIP_MAP);
+        getRoom(RoomID.COMMAND).addAction(RoomAction.START_ENGINES);
     }
 
     /**
      * Defines the ship layout using bidirectional room connections.
      */
     private void connectRooms() {
-        connect(Rooms.BEDROOM, Direction.NORTH, Rooms.BATHROOM);
-        connect(Rooms.BEDROOM, Direction.WEST, Rooms.LIVING_ROOM);
-        connect(Rooms.BATHROOM, Direction.WEST, Rooms.OFFICES);
-        connect(Rooms.OFFICES, Direction.NORTH, Rooms.WORKSHOPS);
-        connect(Rooms.OFFICES, Direction.WEST, Rooms.COSTUME);
-        connect(Rooms.OFFICES, Direction.SOUTH, Rooms.COMMAND);
-        connect(Rooms.COSTUME, Direction.SOUTH, Rooms.KITCHEN);
-        connect(Rooms.KITCHEN, Direction.EAST, Rooms.LIVING_ROOM);
-        connect(Rooms.LIVING_ROOM, Direction.NORTH, Rooms.COMMAND);
-        connect(Rooms.LIVING_ROOM, Direction.SOUTH, Rooms.EXIT_ROOM);
+        connect(RoomID.BEDROOM, Direction.NORTH, RoomID.BATHROOM);
+        connect(RoomID.BEDROOM, Direction.WEST, RoomID.LIVING_ROOM);
+        connect(RoomID.BATHROOM, Direction.WEST, RoomID.OFFICES);
+        connect(RoomID.OFFICES, Direction.NORTH, RoomID.WORKSHOPS);
+        connect(RoomID.OFFICES, Direction.WEST, RoomID.COSTUME);
+        connect(RoomID.OFFICES, Direction.SOUTH, RoomID.COMMAND);
+        connect(RoomID.COSTUME, Direction.SOUTH, RoomID.KITCHEN);
+        connect(RoomID.KITCHEN, Direction.EAST, RoomID.LIVING_ROOM);
+        connect(RoomID.LIVING_ROOM, Direction.NORTH, RoomID.COMMAND);
+        connect(RoomID.LIVING_ROOM, Direction.SOUTH, RoomID.EXIT_ROOM);
     }
 
     /**
@@ -132,7 +132,7 @@ public final class ShipMap {
      * @param direction direction from the origin room
      * @param to        destination room identifier
      */
-    private void connect(Rooms from, Direction direction, Rooms to) {
+    private void connect(RoomID from, Direction direction, RoomID to) {
         getRoom(from).connect(direction, to);
         getRoom(to).connect(direction.opposite(), from);
     }

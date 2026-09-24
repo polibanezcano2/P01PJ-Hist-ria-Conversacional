@@ -8,7 +8,7 @@ import java.util.Set;
  * Stores the item identifiers carried by the player.
  */
 public final class Inventory {
-    private final Set<Items> items = EnumSet.noneOf(Items.class);
+    private final Set<ItemID> items = EnumSet.noneOf(ItemID.class);
 
     /**
      * Indicates whether the inventory contains an item.
@@ -16,7 +16,7 @@ public final class Inventory {
      * @param item item identifier
      * @return {@code true} when present
      */
-    public boolean has(Items item) {
+    public boolean has(ItemID item) {
         return items.contains(item);
     }
 
@@ -25,7 +25,7 @@ public final class Inventory {
      *
      * @param item item identifier
      */
-    public void add(Items item) {
+    public void add(ItemID item) {
         items.add(item);
     }
 
@@ -34,7 +34,7 @@ public final class Inventory {
      *
      * @param item item identifier
      */
-    public void remove(Items item) {
+    public void remove(ItemID item) {
         items.remove(item);
     }
 
@@ -43,7 +43,7 @@ public final class Inventory {
      *
      * @return read-only item identifiers
      */
-    public Set<Items> getItems() {
+    public Set<ItemID> getItems() {
         return Collections.unmodifiableSet(items);
     }
 

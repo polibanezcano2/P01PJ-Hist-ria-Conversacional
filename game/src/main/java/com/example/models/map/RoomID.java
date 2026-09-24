@@ -8,7 +8,7 @@ package com.example.models.map;
  * object. The full room data is stored in {@link Room}, and the map that relates
  * these identifiers to real rooms is built by {@link ShipMap}.
  */
-public enum Rooms {
+public enum RoomID {
     /** Ship workshop. */
     WORKSHOPS,
 
@@ -37,5 +37,5 @@ public enum Rooms {
     COMMAND;
 
     /** Cached enum values for indexed access. */
-    protected static final Rooms[] VALUES = values();
+    protected static final RoomID[] VALUES = values();
 }

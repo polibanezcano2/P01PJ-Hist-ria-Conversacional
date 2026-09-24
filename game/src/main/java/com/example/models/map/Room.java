@@ -7,23 +7,23 @@ import java.util.Map;
 import java.util.Set;
 
 import com.example.models.actions.RoomAction;
-import com.example.models.items.Items;
+import com.example.models.items.ItemID;
 
 /**
  * Represents a ship room without directly referencing other room objects.
  *
  * <p>
- * Connections are stored as {@link Rooms} identifiers. The {@link ShipMap}
+ * Connections are stored as {@link RoomID} identifiers. The {@link ShipMap}
  * resolves those identifiers into actual {@code Room} instances when navigation
  * needs them. Room items and actions are stored as identifiers for the same
  * reason.
  */
 public final class Room {
-    private final Rooms id;
+    private final RoomID id;
     private final String name;
     private final String description;
-    private final Map<Direction, Rooms> connections = new EnumMap<>(Direction.class);
-    private final Set<Items> items = EnumSet.noneOf(Items.class);
+    private final Map<Direction, RoomID> connections = new EnumMap<>(Direction.class);
+    private final Set<ItemID> items = EnumSet.noneOf(ItemID.class);
     private final Set<RoomAction> actions = EnumSet.noneOf(RoomAction.class);
 
     /**
@@ -33,7 +33,7 @@ public final class Room {
      * @param name        display name
      * @param description short room description
      */
-    public Room(Rooms id, String name, String description) {
+    public Room(RoomID id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -45,7 +45,7 @@ public final class Room {
      * @param direction direction from this room
      * @param roomId    destination room identifier
      */
-    public void connect(Direction direction, Rooms roomId) {
+    public void connect(Direction direction, RoomID roomId) {
         connections.put(direction, roomId);
     }
 
@@ -54,7 +54,7 @@ public final class Room {
      *
      * @return room identifier
      */
-    public Rooms getId() {
+    public RoomID getId() {
         return id;
     }
 
@@ -82,7 +82,7 @@ public final class Room {
      * @param direction direction to inspect
      * @return destination room identifier, or {@code null} when there is no exit
      */
-    public Rooms getConnection(Direction direction) {
+    public RoomID getConnection(Direction direction) {
         return connections.get(direction);
     }
 
@@ -91,7 +91,7 @@ public final class Room {
      *
      * @return read-only connections by direction
      */
-    public Map<Direction, Rooms> getConnections() {
+    public Map<Direction, RoomID> getConnections() {
         return Collections.unmodifiableMap(connections);
     }
 
@@ -101,7 +101,7 @@ public final class Room {
      * @param itemId item identifier
      * @return {@code true} if the item was not already present
      */
-    public boolean addItem(Items itemId) {
+    public boolean addItem(ItemID itemId) {
         return items.add(itemId);
     }
 
@@ -111,7 +111,7 @@ public final class Room {
      * @param itemId item identifier
      * @return {@code true} if the item was present
      */
-    public boolean removeItem(Items itemId) {
+    public boolean removeItem(ItemID itemId) {
         return items.remove(itemId);
     }
 
@@ -121,7 +121,7 @@ public final class Room {
      * @param item item identifier
      * @return {@code true} when the item is present
      */
-    public boolean hasItem(Items item) {
+    public boolean hasItem(ItemID item) {
         return items.contains(item);
     }
 
@@ -130,7 +130,7 @@ public final class Room {
      *
      * @return read-only item identifiers
      */
-    public Set<Items> getItems() {
+    public Set<ItemID> getItems() {
         return Collections.unmodifiableSet(items);
     }
 

@@ -1,6 +1,6 @@
 package com.example.models.entities;
 
-import com.example.models.map.Rooms;
+import com.example.models.map.RoomID;
 
 /**
  * Base class for every entity placed in a ship room.
@@ -8,7 +8,7 @@ import com.example.models.map.Rooms;
 public abstract class Entity {
     private final String id;
     private final String name;
-    private Rooms currentRoom;
+    private RoomID currentRoom;
 
     /**
      * Creates an entity.
@@ -17,7 +17,7 @@ public abstract class Entity {
      * @param name        display name
      * @param currentRoom initial room identifier
      */
-    protected Entity(String id, String name, Rooms currentRoom) {
+    protected Entity(String id, String name, RoomID currentRoom) {
         this.id = id;
         this.name = name;
         this.currentRoom = currentRoom;
@@ -46,7 +46,7 @@ public abstract class Entity {
      *
      * @return current room identifier
      */
-    public Rooms getCurrentRoom() {
+    public RoomID getCurrentRoom() {
         return currentRoom;
     }
 
@@ -55,7 +55,7 @@ public abstract class Entity {
      *
      * @param room destination room identifier
      */
-    public void moveTo(Rooms room) {
+    public void moveTo(RoomID room) {
         currentRoom = room;
     }
 }

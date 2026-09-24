@@ -6,7 +6,7 @@ import com.example.models.entities.Malien;
 import com.example.models.entities.Player;
 import com.example.models.game.GameState;
 import com.example.models.items.ItemCatalog;
-import com.example.models.map.Rooms;
+import com.example.models.map.RoomID;
 import com.example.models.map.ShipMap;
 
 /**
@@ -64,9 +64,9 @@ public final class GameGenerator {
      * @return entity manager
      */
     private EntityManager createEntityManager() {
-        Player player = new Player(Rooms.BEDROOM);
-        Malien malien = new Malien(Rooms.BEDROOM);
-        CrewMember crewMember = new CrewMember(Rooms.BEDROOM);
+        Player player = new Player(RoomID.BEDROOM);
+        Malien malien = new Malien(RoomID.BEDROOM);
+        CrewMember crewMember = new CrewMember(RoomID.BEDROOM);
         return new EntityManager(player, malien, crewMember);
     }
 

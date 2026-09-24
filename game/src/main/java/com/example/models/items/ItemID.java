@@ -3,7 +3,7 @@ package com.example.models.items;
 /**
  * Stable identifiers for all game items.
  */
-public enum Items {
+public enum ItemID {
     /** Donut used as a temporary distraction for Malien. */
     DONUT,
 

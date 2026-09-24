@@ -1,7 +1,7 @@
 package com.example.models.entities;
 
 import com.example.models.items.Inventory;
-import com.example.models.map.Rooms;
+import com.example.models.map.RoomID;
 
 /**
  * Player-controlled entity.
@@ -15,7 +15,7 @@ public final class Player extends Entity {
      *
      * @param currentRoom initial room identifier
      */
-    public Player(Rooms currentRoom) {
+    public Player(RoomID currentRoom) {
         super("player", "Capità Bond", currentRoom);
         inventory = new Inventory();
     }

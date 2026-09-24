@@ -30,6 +30,19 @@ public final class Menu {
     }
 
     /**
+     * Displays a numbered menu with descriptive text below the title and keeps
+     * asking until the user chooses a valid option.
+     *
+     * @param options options to display
+     * @param title   menu title
+     * @param details descriptive lines to print before the options
+     * @return selected option number, starting at {@code 1}
+     */
+    public static int getOption(List<String> options, String title, List<String> details) {
+        return getOption(options, title, details, Set.of());
+    }
+
+    /**
      * Displays a numbered menu with optional visual gaps after specific options and
      * keeps asking until the user chooses a valid option.
      *
@@ -39,12 +52,27 @@ public final class Menu {
      * @return selected option number, starting at {@code 1}
      */
     public static int getOption(List<String> options, String title, Set<Integer> gapsAfter) {
+        return getOption(options, title, List.of(), gapsAfter);
+    }
+
+    /**
+     * Displays a numbered menu with descriptive text and optional visual gaps after
+     * specific options, then keeps asking until the user chooses a valid option.
+     *
+     * @param options   options to display
+     * @param title     menu title
+     * @param details   descriptive lines to print before the options
+     * @param gapsAfter option numbers after which a blank line is printed
+     * @return selected option number, starting at {@code 1}
+     */
+    public static int getOption(List<String> options, String title, List<String> details, Set<Integer> gapsAfter) {
         boolean loop = true;
         int option = -1;
 
         while (loop) {
             cls.clear();
             Prettier.printTitle(title);
+            printDetails(details);
             printArr(options, gapsAfter);
             System.out.println();
 
@@ -66,6 +94,17 @@ public final class Menu {
         }
 
         return option;
+    }
+
+    private static void printDetails(List<String> details) {
+        if (details.isEmpty()) {
+            return;
+        }
+
+        for (String detail : details) {
+            System.out.println(detail);
+        }
+        System.out.println();
     }
 
     private static void printArr(List<String> arr, Set<Integer> gapsAfter) {

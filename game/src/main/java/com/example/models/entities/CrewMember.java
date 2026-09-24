@@ -1,20 +1,25 @@
 package com.example.models.entities;
 
-import com.example.models.map.Rooms;
+import com.example.models.map.RoomID;
 
 /**
- * Sleeping crew member that can be woken by the player.
+ * Crew member NPC that can sleep, wander and die.
+ *
+ * <p>
+ * The crew member starts alive and asleep. Waking and wandering state are used
+ * by room interactions and by the map information screen.
  */
 public final class CrewMember extends Entity implements TurnActor {
     private boolean asleep = true;
     private boolean wandering;
+    private boolean alive = true;
 
     /**
      * Creates the crew member.
      *
      * @param currentRoom initial room identifier
      */
-    public CrewMember(Rooms currentRoom) {
+    public CrewMember(RoomID currentRoom) {
         super("crew-member", "Tripulant", currentRoom);
     }
 
@@ -51,6 +56,23 @@ public final class CrewMember extends Entity implements TurnActor {
     }
 
     /**
+     * Indicates whether the crew member is still alive.
+     *
+     * @return {@code true} when alive
+     */
+    public boolean isAlive() {
+        return alive;
+    }
+
+    /**
+     * Marks the crew member as dead and stops any wandering behavior.
+     */
+    public void die() {
+        alive = false;
+        wandering = false;
+    }
+
+    /**
      * Enables crew member wandering.
      */
     public void startWandering() {
@@ -70,6 +92,8 @@ public final class CrewMember extends Entity implements TurnActor {
      * <p>
      * Scaffold: sleeping crew members do nothing. Future wandering and hint logic
      * belongs here.
+     *
+     * @param state current game state
      */
     @Override
     public void takeTurn(com.example.models.game.GameState state) {
