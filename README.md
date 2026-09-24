@@ -1,237 +1,199 @@
-# 🚀 P000 - Història Conversacional
+# 🚀 P000 - Historia Conversacional
 
-## 📖 Descripció
+## 📖 Descripción
 
-Projecte desenvolupat per al mòdul MP13 - Mòdul DUAL del CFGS de Desenvolupament d'Aplicacions Multiplataforma.
+Proyecto desarrollado para el módulo **MP13 - Módulo DUAL** del CFGS de **Desarrollo de Aplicaciones Multiplataforma**.
 
-L'objectiu del projecte és crear una **aventura conversacional de text**, en la qual el jugador pot desplaçar-se per diferents zones, interactuar amb objectes i personatges i utilitzar un inventari per avançar en la història.
+El objetivo del proyecto es crear una **aventura conversacional de texto**, en la que el jugador puede desplazarse por diferentes zonas, interactuar con objetos y personajes y utilizar un inventario para avanzar en la historia.
 
-L'aventura està ambientada l'any **2120**, a bord de la nau espacial **PiaXXII**, que viatja cap al planeta SUMMEM. Després de patir danys en el sistema de propulsió, el capità Bond haurà de recórrer la nau, trobar els objectes necessaris i reparar els motors per poder continuar la missió.
-
----
-
-## 🎮 Objectiu del joc
-
-El jugador haurà d'aconseguir reparar els propulsors de la nau i tornar a la sala de comandament.
-
-Durant l'aventura haurà de:
-
-- Explorar diferents zones de la nau.
-- Obrir portes.
-- Agafar i deixar objectes.
-- Gestionar un inventari.
-- Parlar amb iHall.
-- Trobar una llanterna.
-- Aconseguir una eina per reparar els motors.
-- Aconseguir i utilitzar un vestit espacial.
-- Evitar o distreure en Malien.
-- Reparar els propulsors.
-- Tornar a la sala de comandament.
+La aventura está ambientada en el año **2120**, a bordo de la nave espacial **PiaXXII**, que viaja hacia el planeta **SUMMEM**. Después de sufrir daños en el sistema de propulsión, el capitán Bond deberá recorrer la nave, encontrar los objetos necesarios y reparar los motores para poder continuar la misión.
 
 ---
 
-## 🗺️ Zones
+## 🎮 Objetivo del juego
 
-El joc disposa de diferents zones connectades entre si, entre les quals hi ha:
+El jugador deberá conseguir reparar los propulsores de la nave y regresar a la sala de mando.
 
-- Dormitori
-- Banys
-- Cuina
-- Vestuari
-- Oficines
-- Taller
-- Menjador
-- Sala de comandament
-- Sala de sortida exterior
-- Propulsors
+Durante la aventura deberá:
 
-Cada zona disposa de la seva pròpia descripció, objectes i interaccions.
+* Explorar diferentes zonas de la nave.
+* Recoger y dejar objetos.
+* Gestionar un inventario.
+* Conseguir una herramienta para reparar los motores.
+* Conseguir y utilizar un traje espacial.
+* Evitar o distraer a Malien.
+* Reparar los propulsores.
+* Regresar a la sala de mando.
 
 ---
 
-## ⌨️ Comandes disponibles
+## 🗺️ Zonas
 
-El joc interpreta diferents ordres introduïdes pel jugador.
+El juego dispone de diferentes zonas conectadas entre sí, entre las cuales se encuentran:
 
-```text
-ANAR
-AGAFAR
-DEIXAR
-USAR
-ENCENDRE
-APAGAR
-OBRIR
-TANCAR
-PARLAR
-```
+* Dormitorio
+* Baños
+* Cocina
+* Vestuario
+* Oficinas
+* Taller
+* Comedor
+* Sala de mando
+* Sala de salida exterior
+* Propulsores
 
-Exemples:
-
-```text
-ANAR CUINA
-AGAFAR DONUTS
-ENCENDRE LLANTERNA
-OBRIR PORTA
-USAR EINA
-PARLAR IHALL
-```
+Cada zona dispone de su propia descripción, objetos e interacciones.
 
 ---
 
-## 🎒 Inventari
 
-El jugador disposa d'un inventari on pot emmagatzemar els objectes que troba durant la partida.
 
-Els objectes es poden:
+## 🎒 Inventario
 
-- Agafar d'una zona.
-- Guardar a l'inventari.
-- Utilitzar.
-- Deixar novament en una altra zona.
+El jugador dispone de un inventario donde puede almacenar los objetos que encuentra durante la partida.
+
+Los objetos se pueden:
+
+* Recoger de una zona.
+* Guardar en el inventario.
+* Utilizar.
+* Dejar nuevamente en otra zona.
 
 ---
 
-## 🧰 Objectes principals
+## 🧰 Objetos principales
 
-### 🔦 Llanterna
+### 🔦 Linterna
 
-La seva posició canvia entre partides.
+La posición de la linterna puede cambiar entre partidas.
 
-iHall coneix la seva ubicació, encara que no sempre proporciona informació correcta.
+Es necesaria para poder encontrar la herramienta dentro del taller.
 
-És necessària per poder trobar l'eina dins del taller.
+### 🔧 Herramienta
 
-### 🔧 Eina
+Se encuentra en el taller.
 
-Es troba al taller.
+Permite reparar los propulsores de la nave.
 
-Permet reparar els propulsors de la nau.
+### 🧑‍🚀 Traje espacial
 
-### 🧑‍🚀 Vestit espacial
+Se encuentra en el vestuario.
 
-Es troba al vestuari.
+Es necesario para poder acceder de forma segura al exterior de la nave.
 
-És necessari per poder accedir de manera segura a l'exterior de la nau.
+### 🪪 Tarjeta identificadora
 
-### 🪪 Targeta identificadora
+Permite abrir las puertas automáticas de la nave.
 
-Permet obrir les portes automàtiques de la nau.
+La tarjeta personal del capitán se encuentra escondida dentro de las oficinas.
 
-La targeta personal del capità es troba amagada dins de les oficines.
+### 🍩 Dónuts
 
-### 🍩 Dònuts
+Se encuentran en la cocina.
 
-Es troben a la cuina.
-
-Serveixen per distreure en Malien durant la partida.
+Sirven para distraer a Malien durante la partida.
 
 ---
 
 ## 👾 Malien
 
-En Malien és un alien que es mou lliurement per la nau.
+Malien es un alienígena que se mueve libremente por la nave.
 
-Cada dos moviments del jugador, en Malien també es desplaça per la nau.
+Cada dos movimientos del jugador, Malien también se desplaza por la nave.
 
-El jugador haurà d'evitar trobar-se amb ell o utilitzar determinats objectes per distreure'l.
-
----
-
-## 🤖 iHall
-
-iHall és l'ordinador de la nau.
-
-El jugador pot interactuar amb ell mitjançant la comanda:
-
-```text
-PARLAR IHALL
-```
-
-Pot proporcionar informació sobre:
-
-- La posició de determinats objectes.
-- La ubicació d'en Malien.
-- Les portes de la nau.
-
-Tot i això, algunes de les seves respostes poden ser incorrectes.
+El jugador deberá evitar encontrarse con él o utilizar determinados objetos, como los dónuts, para distraerlo.
 
 ---
 
-## 🧠 Funcionament general
+## 🧠 Funcionamiento general
 
-El cicle principal del joc segueix aproximadament aquest flux:
+El ciclo principal del juego sigue aproximadamente este flujo:
 
-1. Mostrar la descripció de la zona actual.
-2. Mostrar els objectes disponibles.
-3. Demanar una ordre al jugador.
-4. Interpretar l'ordre.
-5. Comprovar si l'acció és vàlida.
-6. Executar l'acció.
-7. Mostrar les conseqüències de l'acció.
-8. Comprovar les condicions de victòria o derrota.
+1. Mostrar la descripción de la zona actual.
+2. Mostrar los objetos disponibles.
+3. Pedir una orden al jugador.
+4. Interpretar la orden.
+5. Comprobar si la acción es válida.
+6. Ejecutar la acción.
+7. Mostrar las consecuencias de la acción.
+8. Comprobar las condiciones de victoria o derrota.
 9. Continuar la partida.
 
 ---
 
-## 🏆 Condició de victòria
+## 🏆 Condición de victoria
 
-Per completar l'aventura serà necessari:
+Para completar la aventura será necesario:
 
-1. Aconseguir els objectes necessaris.
-2. Arribar fins als propulsors.
-3. Reparar els motors.
-4. Tornar a la sala de comandament.
-
----
-
-## 💀 Condicions de derrota
-
-La partida pot finalitzar si es produeixen determinades situacions relacionades amb en Malien o altres esdeveniments del joc.
+1. Conseguir los objetos necesarios.
+2. Llegar hasta los propulsores.
+3. Reparar los motores.
+4. Regresar a la sala de mando.
 
 ---
 
-## 🏗️ Estructura del projecte
+## 💀 Condiciones de derrota
+
+La partida puede finalizar si se producen determinadas situaciones relacionadas con Malien u otros eventos del juego.
+
+---
+
+## 🏗️ Estructura del proyecto
 
 ```text
 src/
+
 ├── ...
+
 ├── ...
+
 └── ...
 
 README.md
 ```
 
-> Aquesta secció s'actualitzarà quan l'estructura definitiva de classes i paquets estigui definida.
+> Esta sección se actualizará cuando la estructura definitiva de clases y paquetes esté definida.
 
 ---
 
-## 🧩 Programació orientada a objectes
+## 🧩 Programación orientada a objetos
 
-El projecte està dissenyat aplicant conceptes de programació orientada a objectes com:
+El proyecto está diseñado aplicando conceptos de programación orientada a objetos como:
 
-- Classes i objectes
-- Encapsulació
-- Relacions entre classes
-- Col·leccions
-- Gestió d'estats
-- Gestió d'excepcions
-- Separació de responsabilitats
-
----
-
-## 👥 Autors
-
-Projecte realitzat per:
-
-- Nom Alumne 1
-- Nom Alumne 2
+* Clases y objetos.
+* Encapsulación.
+* Relaciones entre clases.
+* Colecciones.
+* Gestión de estados.
+* Gestión de excepciones.
+* Separación de responsabilidades.
 
 ---
 
-## 🎓 Context acadèmic
+## 👥 Autores
 
-**Projecte:** P000 - Història Conversacional  
-**Mòdul:** MP13 - Mòdul DUAL  
-**CFGS:** Desenvolupament d'Aplicacions Multiplataforma
-**Centre:** Escola Pia
-readme.md s'està mostran
+Proyecto realizado por:
+
+* **Jairo Lineres**
+* **Pol Ibáñez**
+
+---
+
+## 🎓 Contexto académico
+
+**Proyecto:** P000 - Historia Conversacional
+**Módulo:** MP13 - Módulo DUAL
+**CFGS:** Desarrollo de Aplicaciones Multiplataforma
+**Centro:** Escola Pia
+
+---
+
+## 📄 Licencia
+
+Este proyecto ha sido desarrollado con **fines educativos y académicos**.
+
+El código del proyecto está bajo la licencia **MIT**, lo que permite utilizar, modificar y distribuir el código siempre que se mantenga el aviso de copyright y la licencia original.
+
+Copyright © 2026 **Jairo Lineres y Pol Ibáñez**.
+
+Para más información, consulta el archivo `LICENSE` incluido en el repositorio.
